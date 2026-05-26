@@ -801,9 +801,15 @@ function exportCSV(){
     const d=row._d;
     return[d[F.prod_id],d[F.wk],d[F.show],d[F.status],d[F.pod],d[F.writer],d[F.producer],
       d[F.i_sc],d[F.j_dur],d[F.k_ttd_sc],d[F.l_ttd_er],d[F.m_ttd_rel],
-      gT(row,'jt'),d[F.sub],d[F.wc],(()=>{const s=nv(d[F.sub]),j=nv(gT(row,'jt'));return s!==null&&j!==null&&j!==0?s-j:''})(),
-      gT(row,'nt'),d[F.er],(()=>{const e=nv(d[F.er]),n=nv(gT(row,'nt'));return e!==null&&n!==null&&n!==0?e-n:''})(),
-      gT(row,'qt'),d[F.live]];
+      gT(row,'jt'),d[F.sub],d[F.wc],
+      (()=>{const s=nv(d[F.sub]),j=nv(gT(row,'jt'));return s!==null&&j!==null&&j!==0?s-j:''})(),
+      row.sc_rem,
+      gT(row,'nt'),d[F.er],
+      (()=>{const e=nv(d[F.er]),n=nv(gT(row,'nt'));return e!==null&&n!==null&&n!==0?e-n:''})(),
+      row.er_rem,
+      gT(row,'qt'),d[F.live],
+      (()=>{const lv=nv(d[F.live]),qt=nv(gT(row,'qt'));return lv!==null&&qt!==null&&qt!==0?lv-qt:''})(),
+      row.pr_rem];
   })];
   dlCSV(d2,'weekly_'+(fWk||'export').replace(/[^a-z0-9]/gi,'_')+'_'+today()+'.csv');
 }
