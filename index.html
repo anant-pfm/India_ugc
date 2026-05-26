@@ -615,7 +615,7 @@ function rStats(){
 function rHead(){
   const pw=showPrev?prevWk():null;
   const pl=pw?`<span style="font-size:8px;opacity:.6">(${esc(pw)})</span>`:'';
-  const sc=pw?5:4, ec=pw?4:3, pc=pw?4:3;
+  const sc=pw?6:5, ec=pw?5:4, pc=pw?5:4;
   let sec=`<tr class="sr"><th colspan="5" class="th-base">Show details</th>`;
   if(GRP.ij) sec+=`<th colspan="2" class="th-ij">Scripts &amp; Duration</th>`;
   if(GRP.km) sec+=`<th colspan="3" class="th-km">TTD Monthwise</th>`;
