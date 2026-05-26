@@ -79,7 +79,11 @@ def process(xl):
             tgt(r.iloc[13]),num(r.iloc[14]),num(r.iloc[15]),num(r.iloc[16]),
             tgt(r.iloc[18]),num(r.iloc[19]),num(r.iloc[20]),
             tgt(r.iloc[22]),num(r.iloc[23]),
-            excel_date(r.iloc[27]) if len(r)>27 else ''])
+            excel_date(r.iloc[27]) if len(r)>27 else '',
+            clean(r.iloc[17]),   # sc_remarks
+            clean(r.iloc[21]),   # er_remarks
+            clean(r.iloc[25]),   # pr_remarks
+        ])
 
     df2=pd.read_excel(xl,sheet_name='Weekly Dump',header=0)
     df2=df2.dropna(how='all').reset_index(drop=True)
