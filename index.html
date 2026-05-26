@@ -740,7 +740,7 @@ function rBody(){
       c+=`<td class="td-scc mn">${spH}</td>`;
       const sc_Rem=dirty[row._key+'sr']!==undefined?dirty[row._key+'sr']:row.sc_rem;
       const sc_RemD=dirty[row._key+'sr']!==undefined;
-      c+=`<td class="td-scc"><div class="ec" style="gap:2px"><input class="ei2${sc_RemD?' dirty':''}" style="width:68px" value="${esc(sc_Rem)}" data-k="${row._key}" data-f="sr" oninput="mDirty(this)" onkeydown="kChk(event,this)"><span class="rem-icon${sc_Rem?' rem-has':''}" data-k="${row._key}" data-f="sr" data-title="Scripting" data-show="${esc(d[F.show])}" onclick="remOpenFromEl(this,'sr')" title="${sc_Rem||'Click to add/view remarks'}">&#x26F6;</span>${sc_RemD?`<button class="sb" data-k="${row._key}" data-f="sr" onclick="comT(this.dataset.k,this.dataset.f)">Save</button>`:''}</div></td>`;
+      c+=`<td class="td-scc" style="cursor:pointer" onclick="remOpenFromEl(this,'sr','${esc(sc_Rem)}','Scripting','${esc(d[F.show])}')"><div style="display:flex;align-items:center;gap:4px;min-height:22px"><span style="font-size:11px;color:var(--tx);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:90px">${sc_Rem||''}</span><span class="rem-icon${sc_Rem?' rem-has':''}" title="${sc_Rem||'Click to add remarks'}">&#x26F6;</span>${sc_RemD?`<span style="width:6px;height:6px;border-radius:50%;background:var(--accent);display:inline-block"></span>`:''} </div></td>`;
     }
     if(GRP.er){
       if(showPrev) c+=`<td class="td-pe"><span class="pv">${pr&&pr.nt?pr.nt:'&#8212;'}</span></td>`;
@@ -750,7 +750,7 @@ function rBody(){
       c+=`<td class="td-erc mn">${erpH}</td>`;
       const er_Rem=dirty[row._key+'nr']!==undefined?dirty[row._key+'nr']:row.er_rem;
       const er_RemD=dirty[row._key+'nr']!==undefined;
-      c+=`<td class="td-erc"><div class="ec" style="gap:2px"><input class="ei2${er_RemD?' dirty':''}" style="width:68px" value="${esc(er_Rem)}" data-k="${row._key}" data-f="nr" oninput="mDirty(this)" onkeydown="kChk(event,this)"><span class="rem-icon${er_Rem?' rem-has':''}" data-k="${row._key}" data-f="nr" data-title="ER Review" data-show="${esc(d[F.show])}" onclick="remOpenFromEl(this,'nr')" title="${er_Rem||'Click to add/view remarks'}">&#x26F6;</span>${er_RemD?`<button class="sb" data-k="${row._key}" data-f="nr" onclick="comT(this.dataset.k,this.dataset.f)">Save</button>`:''}</div></td>`;
+      c+=`<td class="td-erc" style="cursor:pointer" onclick="remOpenFromEl(this,'nr','${esc(er_Rem)}','ER Review','${esc(d[F.show])}')"><div style="display:flex;align-items:center;gap:4px;min-height:22px"><span style="font-size:11px;color:var(--tx);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:90px">${er_Rem||''}</span><span class="rem-icon${er_Rem?' rem-has':''}" title="${er_Rem||'Click to add remarks'}">&#x26F6;</span>${er_RemD?`<span style="width:6px;height:6px;border-radius:50%;background:var(--accent);display:inline-block"></span>`:''} </div></td>`;
     }
     if(GRP.pr){
       if(showPrev) c+=`<td class="td-pp"><span class="pv">${pr&&pr.qt?pr.qt:'&#8212;'}</span></td>`;
@@ -759,7 +759,7 @@ function rBody(){
       c+=`<td class="td-prc">${lpH}</td>`;
       const pr_Rem=dirty[row._key+'qr']!==undefined?dirty[row._key+'qr']:row.pr_rem;
       const pr_RemD=dirty[row._key+'qr']!==undefined;
-      c+=`<td class="td-prc"><div class="ec" style="gap:2px"><input class="ei2${pr_RemD?' dirty':''}" style="width:68px" value="${esc(pr_Rem)}" data-k="${row._key}" data-f="qr" oninput="mDirty(this)" onkeydown="kChk(event,this)"><span class="rem-icon${pr_Rem?' rem-has':''}" data-k="${row._key}" data-f="qr" data-title="Production" data-show="${esc(d[F.show])}" onclick="remOpenFromEl(this,'qr')" title="${pr_Rem||'Click to add/view remarks'}">&#x26F6;</span>${pr_RemD?`<button class="sb" data-k="${row._key}" data-f="qr" onclick="comT(this.dataset.k,this.dataset.f)">Save</button>`:''}</div></td>`;
+      c+=`<td class="td-prc" style="cursor:pointer" onclick="remOpenFromEl(this,'qr','${esc(pr_Rem)}','Production','${esc(d[F.show])}')"><div style="display:flex;align-items:center;gap:4px;min-height:22px"><span style="font-size:11px;color:var(--tx);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:90px">${pr_Rem||''}</span><span class="rem-icon${pr_Rem?' rem-has':''}" title="${pr_Rem||'Click to add remarks'}">&#x26F6;</span>${pr_RemD?`<span style="width:6px;height:6px;border-radius:50%;background:var(--accent);display:inline-block"></span>`:''} </div></td>`;
     }
     c+='</tr>';
     return c;
@@ -1253,13 +1253,21 @@ DDATA.push(...window.DDATA);
 startDashboard();
 
 let _rK=null,_rF=null,_rEl=null;
-function remOpenFromEl(span,sf){
-  const k=span.dataset.k;
-  const inputEl=span.parentNode.querySelector('input');
-  const val=inputEl?inputEl.value:'';
-  const title=span.dataset.title||'';
-  const showName=span.dataset.show||'';
-  remOpen(k,sf,val,inputEl,title,showName);
+function remOpenFromEl(el,sf,val,title,showName){
+  // el can be td or span - find the row key from the row
+  const row=el.closest('tr');
+  if(!row) return;
+  // Find key from first input in row that has data-k, or from data stored on td
+  let k=el.dataset&&el.dataset.k?el.dataset.k:null;
+  if(!k){
+    // Walk up to find the row key via any nearby input
+    const inp=row.querySelector('input[data-k]');
+    if(inp) k=inp.dataset.k;
+  }
+  if(!k) return;
+  // Strip escaped quotes from val
+  const cleanVal=(val||'').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&#39;/g,"'").replace(/&quot;/g,'"');
+  remOpen(k,sf,cleanVal,null,title||'',showName||'');
 }
 function remOpen(k,f,val,inputEl,title,showName){
   _rK=k;_rF=f;_rEl=inputEl;
@@ -1275,8 +1283,16 @@ function remClose(){
 }
 function remSave(){
   const val=document.getElementById('remTA').value;
-  if(_rEl){_rEl.value=val;dirty[_rK+_rF]=val;_rEl.classList.add('dirty');}
-  if(_rK&&_rF) comT(_rK,_rF);
+  if(_rK&&_rF){
+    dirty[_rK+_rF]=val;
+    // Find the row and update it directly
+    const row=rows.find(r=>r._key===_rK);
+    const fm={sr:'sc_rem',nr:'er_rem',qr:'pr_rem',j:'jt',n:'nt',q:'qt'};
+    if(row&&fm[_rF]) row[fm[_rF]]=val;
+    saveT();
+    rHead();rBody();
+    toast('Remark saved');
+  }
   remClose();
 }
 </script>
@@ -1287,8 +1303,8 @@ function remSave(){
     <div class="rem-box-show" id="remShow"></div>
     <textarea id="remTA" placeholder="Enter remarks..."></textarea>
     <div class="rem-box-btns">
-      <button class="rem-cancel-btn" onclick="remClose()">Cancel</button>
-      <button class="rem-save-btn" onclick="remSave()">Save</button>
+      <button class="rem-cancel-btn" onclick="remClose()" style="background:var(--sf2);color:var(--tx);padding:6px 16px;border-radius:6px;border:1px solid var(--bd);cursor:pointer;font-size:13px">Cancel</button>
+      <button class="rem-save-btn" onclick="remSave()" style="background:#16a34a;color:#fff;padding:6px 20px;border-radius:6px;border:none;cursor:pointer;font-size:13px;font-weight:600">Save</button>
     </div>
   </div>
 </div>
