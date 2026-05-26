@@ -315,6 +315,12 @@ table.dtbl td.left{text-align:left}
 .rem-icon{cursor:pointer;opacity:.4;font-size:11px;padding:0 3px;transition:opacity .15s;user-select:none;line-height:1}
 .rem-icon:hover{opacity:1}
 .rem-has{opacity:.8;color:var(--accent)}
+
+/* Week pill ripple effect */
+.pill{position:relative;overflow:hidden;}
+.pill-ripple{position:absolute;border-radius:50%;transform:scale(0);animation:pill-ripple-anim 0.5s ease-out forwards;pointer-events:none;background:rgba(255,255,255,0.45);}
+.pill:not(.active) .pill-ripple{background:rgba(22,163,74,0.35);}
+@keyframes pill-ripple-anim{0%{transform:scale(0);opacity:1;}100%{transform:scale(2.5);opacity:0;}}
 </style>
 </head>
 <body>
@@ -597,7 +603,21 @@ function rFilters(){
   const wks=sortWks();
   const el=document.getElementById('wpills');
   el.innerHTML=wks.map(w=>`<button class="pill${fWk===w?' active':''}" data-w="${esc(w)}">${esc(w)}</button>`).join('');
-  el.querySelectorAll('.pill').forEach(b=>b.addEventListener('click',()=>setWk(b.dataset.w)));
+  el.querySelectorAll('.pill').forEach(b=>{
+    b.addEventListener('click',function(e){
+      // Ripple effect
+      const rect=this.getBoundingClientRect();
+      const size=Math.max(rect.width,rect.height)*1.8;
+      const x=e.clientX-rect.left-size/2;
+      const y=e.clientY-rect.top-size/2;
+      const ripple=document.createElement('span');
+      ripple.className='pill-ripple';
+      ripple.style.cssText=`width:${size}px;height:${size}px;left:${x}px;top:${y}px;`;
+      this.appendChild(ripple);
+      setTimeout(()=>ripple.remove(),500);
+      setWk(this.dataset.w);
+    });
+  });
   document.getElementById('wtag').textContent=fWk||'';
   const hp=prevWk()!==null;
   const tog=document.getElementById('prev-tog');
@@ -720,7 +740,7 @@ function rBody(){
       c+=`<td class="td-scc mn">${spH}</td>`;
       const sc_Rem=dirty[row._key+'sr']!==undefined?dirty[row._key+'sr']:row.sc_rem;
       const sc_RemD=dirty[row._key+'sr']!==undefined;
-      c+=`<td class="td-scc"><div class="ec" style="gap:2px"><input class="ei2${sc_RemD?' dirty':''}" style="width:68px" value="${esc(sc_Rem)}" data-k="${row._key}" data-f="sr" oninput="mDirty(this)" onkeydown="kChk(event,this)"><span class="rem-icon${sc_Rem?' rem-has':''}" title="${sc_Rem||'Click to add remarks'}" onclick="remOpen('${row._key}','sr',${JSON.stringify(sc_Rem)},this.parentNode.querySelector('input'),'Scripting',${JSON.stringify(d[F.show])})">&#x26F6;</span>${sc_RemD?`<button class="sb" data-k="${row._key}" data-f="sr" onclick="comT(this.dataset.k,this.dataset.f)">Save</button>`:''}</div></td>`;
+      c+=`<td class="td-scc"><div class="ec" style="gap:2px"><input class="ei2${sc_RemD?' dirty':''}" style="width:68px" value="${esc(sc_Rem)}" data-k="${row._key}" data-f="sr" oninput="mDirty(this)" onkeydown="kChk(event,this)"><span class="rem-icon${sc_Rem?' rem-has':''}" data-k="${row._key}" data-f="sr" data-title="Scripting" data-show="${esc(d[F.show])}" onclick="remOpenFromEl(this,'sr')" title="${sc_Rem||'Click to add/view remarks'}">&#x26F6;</span>${sc_RemD?`<button class="sb" data-k="${row._key}" data-f="sr" onclick="comT(this.dataset.k,this.dataset.f)">Save</button>`:''}</div></td>`;
     }
     if(GRP.er){
       if(showPrev) c+=`<td class="td-pe"><span class="pv">${pr&&pr.nt?pr.nt:'&#8212;'}</span></td>`;
@@ -730,7 +750,7 @@ function rBody(){
       c+=`<td class="td-erc mn">${erpH}</td>`;
       const er_Rem=dirty[row._key+'nr']!==undefined?dirty[row._key+'nr']:row.er_rem;
       const er_RemD=dirty[row._key+'nr']!==undefined;
-      c+=`<td class="td-erc"><div class="ec" style="gap:2px"><input class="ei2${er_RemD?' dirty':''}" style="width:68px" value="${esc(er_Rem)}" data-k="${row._key}" data-f="nr" oninput="mDirty(this)" onkeydown="kChk(event,this)"><span class="rem-icon${er_Rem?' rem-has':''}" title="${er_Rem||'Click to add remarks'}" onclick="remOpen('${row._key}','nr',${JSON.stringify(er_Rem)},this.parentNode.querySelector('input'),'ER Review',${JSON.stringify(d[F.show])})">&#x26F6;</span>${er_RemD?`<button class="sb" data-k="${row._key}" data-f="nr" onclick="comT(this.dataset.k,this.dataset.f)">Save</button>`:''}</div></td>`;
+      c+=`<td class="td-erc"><div class="ec" style="gap:2px"><input class="ei2${er_RemD?' dirty':''}" style="width:68px" value="${esc(er_Rem)}" data-k="${row._key}" data-f="nr" oninput="mDirty(this)" onkeydown="kChk(event,this)"><span class="rem-icon${er_Rem?' rem-has':''}" data-k="${row._key}" data-f="nr" data-title="ER Review" data-show="${esc(d[F.show])}" onclick="remOpenFromEl(this,'nr')" title="${er_Rem||'Click to add/view remarks'}">&#x26F6;</span>${er_RemD?`<button class="sb" data-k="${row._key}" data-f="nr" onclick="comT(this.dataset.k,this.dataset.f)">Save</button>`:''}</div></td>`;
     }
     if(GRP.pr){
       if(showPrev) c+=`<td class="td-pp"><span class="pv">${pr&&pr.qt?pr.qt:'&#8212;'}</span></td>`;
@@ -739,7 +759,7 @@ function rBody(){
       c+=`<td class="td-prc">${lpH}</td>`;
       const pr_Rem=dirty[row._key+'qr']!==undefined?dirty[row._key+'qr']:row.pr_rem;
       const pr_RemD=dirty[row._key+'qr']!==undefined;
-      c+=`<td class="td-prc"><div class="ec" style="gap:2px"><input class="ei2${pr_RemD?' dirty':''}" style="width:68px" value="${esc(pr_Rem)}" data-k="${row._key}" data-f="qr" oninput="mDirty(this)" onkeydown="kChk(event,this)"><span class="rem-icon${pr_Rem?' rem-has':''}" title="${pr_Rem||'Click to add remarks'}" onclick="remOpen('${row._key}','qr',${JSON.stringify(pr_Rem)},this.parentNode.querySelector('input'),'Production',${JSON.stringify(d[F.show])})">&#x26F6;</span>${pr_RemD?`<button class="sb" data-k="${row._key}" data-f="qr" onclick="comT(this.dataset.k,this.dataset.f)">Save</button>`:''}</div></td>`;
+      c+=`<td class="td-prc"><div class="ec" style="gap:2px"><input class="ei2${pr_RemD?' dirty':''}" style="width:68px" value="${esc(pr_Rem)}" data-k="${row._key}" data-f="qr" oninput="mDirty(this)" onkeydown="kChk(event,this)"><span class="rem-icon${pr_Rem?' rem-has':''}" data-k="${row._key}" data-f="qr" data-title="Production" data-show="${esc(d[F.show])}" onclick="remOpenFromEl(this,'qr')" title="${pr_Rem||'Click to add/view remarks'}">&#x26F6;</span>${pr_RemD?`<button class="sb" data-k="${row._key}" data-f="qr" onclick="comT(this.dataset.k,this.dataset.f)">Save</button>`:''}</div></td>`;
     }
     c+='</tr>';
     return c;
@@ -1233,6 +1253,14 @@ DDATA.push(...window.DDATA);
 startDashboard();
 
 let _rK=null,_rF=null,_rEl=null;
+function remOpenFromEl(span,sf){
+  const k=span.dataset.k;
+  const inputEl=span.parentNode.querySelector('input');
+  const val=inputEl?inputEl.value:'';
+  const title=span.dataset.title||'';
+  const showName=span.dataset.show||'';
+  remOpen(k,sf,val,inputEl,title,showName);
+}
 function remOpen(k,f,val,inputEl,title,showName){
   _rK=k;_rF=f;_rEl=inputEl;
   document.getElementById('remTtl').textContent=title+' Remarks';
