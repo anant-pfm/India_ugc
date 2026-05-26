@@ -300,6 +300,16 @@ table.dtbl td.left{text-align:left}
 .tswitch.dark{background:rgba(99,102,241,.6);border-color:rgba(99,102,241,.8)}
 .tswitch-thumb{position:absolute;width:14px;height:14px;border-radius:50%;background:#fff;top:2px;left:2px;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.3)}
 .tswitch.dark .tswitch-thumb{transform:translateX(16px)}
+
+.rem-ov{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:9999;align-items:center;justify-content:center}
+.rem-ov.show{display:flex}
+.rem-box{background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:16px;width:420px;max-width:95vw}
+.rem-box-ttl{font-size:11px;font-weight:600;opacity:.6;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}
+.rem-box textarea{width:100%;height:80px;background:var(--sf);border:1px solid var(--bd);border-radius:4px;padding:8px;font-size:13px;color:var(--tx);resize:vertical;font-family:inherit;box-sizing:border-box}
+.rem-box-btns{display:flex;gap:8px;margin-top:10px;justify-content:flex-end}
+.rem-box-btns button{padding:5px 14px;border-radius:4px;border:none;cursor:pointer;font-size:12px;font-weight:500}
+.rem-save-btn{background:var(--accent);color:#fff}
+.rem-cancel-btn{background:var(--sf2);color:var(--tx)}
 </style>
 </head>
 <body>
@@ -705,7 +715,7 @@ function rBody(){
       c+=`<td class="td-scc mn">${spH}</td>`;
       const sc_Rem=dirty[row._key+'sr']!==undefined?dirty[row._key+'sr']:row.sc_rem;
       const sc_RemD=dirty[row._key+'sr']!==undefined;
-      c+=`<td class="td-scc"><div class="ec" style="gap:2px"><input class="ei2${sc_RemD?' dirty':''}" style="min-width:70px;max-width:100px" value="${esc(sc_Rem)}" data-k="${row._key}" data-f="sr" oninput="mDirty(this)" onkeydown="kChk(event,this)" title="${sc_Rem}">${sc_Rem?`<span style="cursor:pointer;opacity:.5;font-size:10px;padding:0 2px" title="${sc_Rem}">&#9776;</span>`:''}${sc_RemD?`<button class="sb" data-k="${row._key}" data-f="sr" onclick="comT(this.dataset.k,this.dataset.f)">Save</button>`:''}</div></td>`;
+      c+=`<td class="td-scc"><div class="ec" style="gap:2px"><input class="ei2${sc_RemD?' dirty':''}" style="width:68px" value="${esc(sc_Rem)}" data-k="${row._key}" data-f="sr" oninput="mDirty(this)" onkeydown="kChk(event,this)"><button class="sb" style="padding:0 5px;background:transparent;border:1px solid var(--bd);color:var(--tx)" onclick="remOpen('${row._key}','sr',${JSON.stringify(sc_Rem)},this.parentNode.querySelector('input'),'Scripting')">&#x270E;</button>${sc_RemD?`<button class="sb" data-k="${row._key}" data-f="sr" onclick="comT(this.dataset.k,this.dataset.f)">Save</button>`:''}</div></td>`;
     }
     if(GRP.er){
       if(showPrev) c+=`<td class="td-pe"><span class="pv">${pr&&pr.nt?pr.nt:'&#8212;'}</span></td>`;
@@ -715,7 +725,7 @@ function rBody(){
       c+=`<td class="td-erc mn">${erpH}</td>`;
       const er_Rem=dirty[row._key+'nr']!==undefined?dirty[row._key+'nr']:row.er_rem;
       const er_RemD=dirty[row._key+'nr']!==undefined;
-      c+=`<td class="td-erc"><div class="ec" style="gap:2px"><input class="ei2${er_RemD?' dirty':''}" style="min-width:70px;max-width:100px" value="${esc(er_Rem)}" data-k="${row._key}" data-f="nr" oninput="mDirty(this)" onkeydown="kChk(event,this)" title="${er_Rem}">${er_Rem?`<span style="cursor:pointer;opacity:.5;font-size:10px;padding:0 2px" title="${er_Rem}">&#9776;</span>`:''}${er_RemD?`<button class="sb" data-k="${row._key}" data-f="nr" onclick="comT(this.dataset.k,this.dataset.f)">Save</button>`:''}</div></td>`;
+      c+=`<td class="td-erc"><div class="ec" style="gap:2px"><input class="ei2${er_RemD?' dirty':''}" style="width:68px" value="${esc(er_Rem)}" data-k="${row._key}" data-f="nr" oninput="mDirty(this)" onkeydown="kChk(event,this)"><button class="sb" style="padding:0 5px;background:transparent;border:1px solid var(--bd);color:var(--tx)" onclick="remOpen('${row._key}','nr',${JSON.stringify(er_Rem)},this.parentNode.querySelector('input'),'ER Review')">&#x270E;</button>${er_RemD?`<button class="sb" data-k="${row._key}" data-f="nr" onclick="comT(this.dataset.k,this.dataset.f)">Save</button>`:''}</div></td>`;
     }
     if(GRP.pr){
       if(showPrev) c+=`<td class="td-pp"><span class="pv">${pr&&pr.qt?pr.qt:'&#8212;'}</span></td>`;
@@ -724,7 +734,7 @@ function rBody(){
       c+=`<td class="td-prc">${lpH}</td>`;
       const pr_Rem=dirty[row._key+'qr']!==undefined?dirty[row._key+'qr']:row.pr_rem;
       const pr_RemD=dirty[row._key+'qr']!==undefined;
-      c+=`<td class="td-prc"><div class="ec" style="gap:2px"><input class="ei2${pr_RemD?' dirty':''}" style="min-width:70px;max-width:100px" value="${esc(pr_Rem)}" data-k="${row._key}" data-f="qr" oninput="mDirty(this)" onkeydown="kChk(event,this)" title="${pr_Rem}">${pr_Rem?`<span style="cursor:pointer;opacity:.5;font-size:10px;padding:0 2px" title="${pr_Rem}">&#9776;</span>`:''}${pr_RemD?`<button class="sb" data-k="${row._key}" data-f="qr" onclick="comT(this.dataset.k,this.dataset.f)">Save</button>`:''}</div></td>`;
+      c+=`<td class="td-prc"><div class="ec" style="gap:2px"><input class="ei2${pr_RemD?' dirty':''}" style="width:68px" value="${esc(pr_Rem)}" data-k="${row._key}" data-f="qr" oninput="mDirty(this)" onkeydown="kChk(event,this)"><button class="sb" style="padding:0 5px;background:transparent;border:1px solid var(--bd);color:var(--tx)" onclick="remOpen('${row._key}','qr',${JSON.stringify(pr_Rem)},this.parentNode.querySelector('input'),'Production')">&#x270E;</button>${pr_RemD?`<button class="sb" data-k="${row._key}" data-f="qr" onclick="comT(this.dataset.k,this.dataset.f)">Save</button>`:''}</div></td>`;
     }
     c+='</tr>';
     return c;
@@ -738,8 +748,8 @@ function mDirty(el){
   const k=el.dataset.k, f=el.dataset.f;
   dirty[k+f]=el.value;
   el.classList.add('dirty');
-  let btn=el.nextElementSibling;
-  if(!btn||btn.tagName!=='BUTTON'){
+  let btn=el.parentNode.querySelector('button.sb[data-f="'+f+'"]');
+  if(!btn){
     btn=document.createElement('button');
     btn.className='sb';btn.textContent='Save';
     btn.dataset.k=k;btn.dataset.f=f;
@@ -1216,6 +1226,36 @@ WDATA.push(...window.WDATA);
 YDATA.push(...window.YDATA);
 DDATA.push(...window.DDATA);
 startDashboard();
+
+let _rK=null,_rF=null,_rEl=null;
+function remOpen(k,f,val,inputEl,title){
+  _rK=k;_rF=f;_rEl=inputEl;
+  document.getElementById('remTtl').textContent=title+' Remarks';
+  document.getElementById('remTA').value=val||'';
+  document.getElementById('remOv').classList.add('show');
+  setTimeout(()=>document.getElementById('remTA').focus(),50);
+}
+function remClose(){
+  document.getElementById('remOv').classList.remove('show');
+  _rK=_rF=_rEl=null;
+}
+function remSave(){
+  const val=document.getElementById('remTA').value;
+  if(_rEl){_rEl.value=val;dirty[_rK+_rF]=val;_rEl.classList.add('dirty');}
+  if(_rK&&_rF) comT(_rK,_rF);
+  remClose();
+}
 </script>
+
+<div class="rem-ov" id="remOv" onclick="if(event.target===this)remClose()">
+  <div class="rem-box">
+    <div class="rem-box-ttl" id="remTtl">Remarks</div>
+    <textarea id="remTA" placeholder="Enter remarks..."></textarea>
+    <div class="rem-box-btns">
+      <button class="rem-cancel-btn" onclick="remClose()">Cancel</button>
+      <button class="rem-save-btn" onclick="remSave()">Save</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
