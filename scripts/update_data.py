@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-UGC Tracker — regenerates index.html with fresh data from data.xlsx
+UGC Tracker — regenerates index.html data from data.xlsx
 Usage: python scripts/update_data.py path/to/data.xlsx
 """
 import sys, os, json, math, re
@@ -127,7 +127,6 @@ def main():
     print(f"  DDATA: {len(daily)} rows")
 
     today = datetime.today().strftime('%d %b %Y %H:%M')
-
     new_data = (
         f"// Auto-generated {today} from {os.path.basename(xl)}\n"
         f"// WDATA:{len(weekly)} rows  YDATA:{len(yearly)} rows  DDATA:{len(daily)} rows\n"
@@ -140,20 +139,17 @@ def main():
     with open(index_path,'r',encoding='utf-8') as f:
         html = f.read()
 
-    # Replace the data block: from "// Auto-generated" line through end of window.DDATA=...;
-    pattern = r'// Auto-generated.*?window\.DDATA=\[.*?\];'
+    # Replace the 3 data arrays keeping all JS functions intact
+    pattern = r'// Auto-generated.*?window\.WDATA=\[.*?\];\nwindow\.YDATA=\[.*?\];\nwindow\.DDATA=\[.*?\];'
     if not re.search(pattern, html, re.DOTALL):
-        print("ERROR: Could not find data block in index.html")
-        print("Make sure index.html contains the '// Auto-generated' comment")
+        print("ERROR: Data block not found in index.html")
         sys.exit(1)
 
     new_html = re.sub(pattern, new_data, html, count=1, flags=re.DOTALL)
-
     with open(index_path,'w',encoding='utf-8') as f:
         f.write(new_html)
 
     print(f"✓ index.html updated ({len(new_html):,} chars)")
-    print("Done.")
 
 if __name__ == '__main__':
     main()
